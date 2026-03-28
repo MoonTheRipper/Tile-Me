@@ -18,6 +18,15 @@ Tile Me needs Accessibility permission before it can inspect or move other apps'
 
 Quick Start can be reopened later from the menu bar, and Support now lives separately from the one-time welcome flow.
 
+## Install Tile Me
+
+1. Download the DMG.
+2. Open it.
+3. Drag Tile Me to Applications.
+4. Open Tile Me from Applications.
+
+If macOS blocks the app, try to open it once, then open `System Settings > Privacy & Security` and click `Open Anyway` for Tile Me. Future signed and notarized releases may improve the first-open experience.
+
 ## Known Limitations
 
 - v1.0.0 ships built-in layouts only

@@ -56,7 +56,26 @@ Tile Me includes direct buttons to request access, open the right System Setting
 
 Quick Start can be reopened later from `Help / Quick Start…` in the menu bar or from Settings.
 
-## Installation And Development
+## Install Tile Me
+
+1. Download the DMG.
+2. Open it.
+3. Drag Tile Me to Applications.
+4. Open Tile Me from Applications.
+
+If macOS blocks the app:
+
+Because this release is not signed and notarized, macOS may warn that Tile Me is from an unidentified developer. If you trust the release source:
+
+1. Try to open Tile Me once.
+2. Open `System Settings > Privacy & Security`.
+3. Scroll to the Security section.
+4. Click `Open Anyway` for Tile Me.
+5. Confirm that you want to open it.
+
+Future signed and notarized releases may improve the first-open experience.
+
+## Build From Source
 
 Requirements:
 
@@ -83,6 +102,12 @@ Test:
 
 ```bash
 ./Scripts/test.sh
+```
+
+Package a release build:
+
+```bash
+./Scripts/package-release.sh
 ```
 
 ## Known Limitations
