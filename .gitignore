@@ -1,0 +1,13 @@
+.DS_Store
+.build/
+.swiftpm/
+*.xcresult
+*.xcuserstate
+*.swp
+*.swo
+*.tmp
+*.orig
+.idea/
+.vscode/
+TileMe.xcodeproj/project.xcworkspace/xcuserdata/
+TileMe.xcodeproj/xcuserdata/
