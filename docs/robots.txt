@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://moontheripper.github.io/Tile-Me/sitemap.xml

@@ -1,0 +1,481 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script>
+    (function () {
+      try {
+        var savedTheme = localStorage.getItem("tileme.site.theme");
+        var prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+        document.documentElement.dataset.theme = savedTheme || (prefersDark ? "dark" : "light");
+      } catch (error) {
+        document.documentElement.dataset.theme = "light";
+      }
+    }());
+  </script>
+  <title>Tile Me for macOS | Native Menu Bar Window Tiling</title>
+  <meta
+    name="description"
+    content="Tile Me is a native macOS menu bar app for fast window tiling, multi-display workflows, directional tile movement, and keyboard-driven placement."
+  >
+  <meta name="theme-color" content="#5bc0de">
+  <meta name="color-scheme" content="light dark">
+  <link rel="canonical" href="https://moontheripper.github.io/Tile-Me/">
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+  <link rel="apple-touch-icon" href="assets/app-icon.png">
+  <link rel="manifest" href="site.webmanifest">
+
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Tile Me for macOS">
+  <meta
+    property="og:description"
+    content="A native menu bar tiling app for macOS with keyboard shortcuts, multi-display support, directional tile movement, and fast GitHub-release downloads."
+  >
+  <meta property="og:url" content="https://moontheripper.github.io/Tile-Me/">
+  <meta property="og:image" content="https://moontheripper.github.io/Tile-Me/assets/app-icon.png">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Tile Me for macOS">
+  <meta
+    name="twitter:description"
+    content="Download Tile Me for macOS. Native menu bar tiling, multi-display workflows, and fast keyboard placement."
+  >
+  <meta name="twitter:image" content="https://moontheripper.github.io/Tile-Me/assets/app-icon.png">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Tile Me",
+    "applicationCategory": "UtilitiesApplication",
+    "operatingSystem": "macOS 14 or later",
+    "description": "Tile Me is a native macOS menu bar app for tiling and organizing windows with keyboard shortcuts, multi-display support, and recursive split-tree layouts.",
+    "url": "https://moontheripper.github.io/Tile-Me/",
+    "downloadUrl": "https://github.com/moontheripper/Tile-Me/releases/latest",
+    "installUrl": "https://github.com/moontheripper/Tile-Me/releases/latest",
+    "image": "https://moontheripper.github.io/Tile-Me/assets/app-icon.png",
+    "author": {
+      "@type": "Person",
+      "name": "moontheripper"
+    },
+    "sameAs": [
+      "https://github.com/moontheripper/Tile-Me",
+      "https://ko-fi.com/moontheripper"
+    ]
+  }
+  </script>
+
+  <link rel="stylesheet" href="assets/site.css">
+</head>
+<body>
+  <a class="skip-link" href="#content">Skip to content</a>
+
+  <header class="site-header">
+    <div class="container topbar">
+      <a class="brand" href="#top" aria-label="Tile Me home">
+        <img src="assets/app-icon.png" alt="" width="40" height="40">
+        <span>
+          <strong>Tile Me</strong>
+          <span class="brand-subtitle">Native macOS window tiling</span>
+        </span>
+      </a>
+
+      <nav class="main-nav" aria-label="Primary">
+        <a href="#features">Features</a>
+        <a href="#how-it-works">How it works</a>
+        <a href="#download">Download</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+
+      <button id="theme-toggle" class="theme-toggle" type="button" aria-pressed="false" aria-label="Toggle color theme">
+        <span class="theme-toggle-icon" aria-hidden="true"></span>
+        <span class="theme-toggle-label">Theme</span>
+      </button>
+    </div>
+  </header>
+
+  <main id="content">
+    <section class="hero" id="top">
+      <div class="container hero-grid">
+        <div class="hero-copy">
+          <p class="eyebrow">Tile Me for macOS</p>
+          <h1>Tile windows fast, stay in flow, and keep your desktop under control.</h1>
+          <p class="hero-text">
+            Tile Me is a lightweight native macOS menu bar app for keyboard-driven tiling, multi-display window movement,
+            directional tile traversal, and tidy window placement without leaving your workflow.
+          </p>
+
+          <div class="hero-meta">
+            <span class="meta-pill" id="hero-version-pill">Latest GitHub release</span>
+            <span class="meta-pill">Native Swift + SwiftUI</span>
+            <span class="meta-pill">Menu bar-first</span>
+          </div>
+
+          <div class="hero-actions">
+            <a
+              id="download-button"
+              class="button button-primary"
+              href="https://github.com/moontheripper/Tile-Me/releases/latest"
+              target="_blank"
+              rel="noopener noreferrer"
+              data-download-link
+            >
+              Download for macOS
+            </a>
+            <a
+              class="button button-secondary"
+              href="https://github.com/moontheripper/Tile-Me"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              View on GitHub
+            </a>
+          </div>
+
+          <p id="release-status" class="release-status" role="status" aria-live="polite">
+            Checking the latest GitHub release…
+          </p>
+        </div>
+
+        <div class="hero-visual" aria-label="Illustration of Tile Me window tiling across displays">
+          <div class="floating-chip">Directional movement</div>
+          <div class="mock-window">
+            <div class="mock-window-bar">
+              <span class="traffic-lights" aria-hidden="true">
+                <span></span><span></span><span></span>
+              </span>
+              <span class="mock-window-title">Tile Me workflow</span>
+              <span class="mock-window-badge">v<span data-latest-version>Latest</span></span>
+            </div>
+
+            <div class="mock-window-body">
+              <div class="mock-display display-primary">
+                <div class="display-header">
+                  <span>Primary display</span>
+                  <span class="display-label">2x2 layout</span>
+                </div>
+                <div class="tile-scene tile-scene-grid">
+                  <span class="tile tile-a active">Focused app</span>
+                  <span class="tile tile-b"></span>
+                  <span class="tile tile-c"></span>
+                  <span class="tile tile-d hint">Next tile</span>
+                </div>
+              </div>
+
+              <div class="display-connector" aria-hidden="true">
+                <span class="connector-line"></span>
+                <span class="connector-arrow">→</span>
+              </div>
+
+              <div class="mock-display display-secondary">
+                <div class="display-header">
+                  <span>Secondary display</span>
+                  <span class="display-label">Nested layout</span>
+                </div>
+                <div class="tile-scene tile-scene-nested">
+                  <span class="nest nest-large"></span>
+                  <span class="nest nest-top"></span>
+                  <span class="nest nest-mid"></span>
+                  <span class="nest nest-bottom"></span>
+                </div>
+              </div>
+            </div>
+
+            <div class="mock-menu">
+              <span class="menu-pill">Halves</span>
+              <span class="menu-pill">2x2</span>
+              <span class="menu-pill">3x3</span>
+              <span class="menu-pill">Check for Updates</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="features">
+      <div class="container">
+        <div class="section-heading">
+          <p class="eyebrow">Features</p>
+          <h2>Built for fast native macOS window management</h2>
+          <p>
+            Tile Me keeps the current feature set focused: efficient window placement, multiple displays, compact settings,
+            and a recursive layout engine ready for richer layouts later.
+          </p>
+        </div>
+
+        <div class="feature-grid">
+          <article class="feature-card">
+            <h3>Keyboard-driven tiling</h3>
+            <p>Move the focused window into a tile with direct shortcuts or directional traversal without touching a layout editor.</p>
+          </article>
+          <article class="feature-card">
+            <h3>Multi-display support</h3>
+            <p>Assign layouts per display, copy them where needed, and move windows naturally between screens.</p>
+          </article>
+          <article class="feature-card">
+            <h3>Directional movement</h3>
+            <p>Use arrow-based traversal to move to the nearest valid tile above, below, left, or right across your display setup.</p>
+          </article>
+          <article class="feature-card">
+            <h3>Future-ready layout core</h3>
+            <p>Layouts are powered by recursive split trees, so the foundation already supports nested and uneven regions.</p>
+          </article>
+          <article class="feature-card">
+            <h3>Native menu bar experience</h3>
+            <p>Quick actions, layout selection, settings, help, support, and update checks all live in a restrained menu bar workflow.</p>
+          </article>
+          <article class="feature-card">
+            <h3>Lightweight release flow</h3>
+            <p>Tile Me ships through GitHub releases and can check for a new version without installing background services.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-alt" id="how-it-works">
+      <div class="container">
+        <div class="section-heading">
+          <p class="eyebrow">How it works</p>
+          <h2>A short tiling loop that stays out of the way</h2>
+        </div>
+
+        <div class="steps-grid">
+          <article class="step-card">
+            <span class="step-index">1</span>
+            <h3>Pick a layout</h3>
+            <p>Choose a built-in layout from the menu bar or assign layouts per display in Settings.</p>
+          </article>
+          <article class="step-card">
+            <span class="step-index">2</span>
+            <h3>Move the focused window</h3>
+            <p>Use direct tile shortcuts, maximize, next-display movement, or arrow traversal to reach the next tile.</p>
+            <div class="shortcut-row" aria-label="Example shortcuts">
+              <span class="shortcut-pill">Control</span>
+              <span class="shortcut-pill">Option</span>
+              <span class="shortcut-pill">Arrow keys</span>
+            </div>
+          </article>
+          <article class="step-card">
+            <span class="step-index">3</span>
+            <h3>Fine-tune later</h3>
+            <p>Shortcut bindings can be customized in Settings, while Help, Support, and update checks stay easy to reach.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="showcase">
+      <div class="container">
+        <div class="section-heading">
+          <p class="eyebrow">Visual showcase</p>
+          <h2>Current functionality, shown instead of buried in copy</h2>
+        </div>
+
+        <div class="showcase-grid">
+          <article class="showcase-card">
+            <h3>Tile a window fast</h3>
+            <svg viewBox="0 0 360 220" role="img" aria-label="Illustration of a nested tile layout">
+              <rect x="18" y="18" width="324" height="184" rx="18" class="svg-frame"></rect>
+              <rect x="36" y="42" width="156" height="142" rx="14" class="svg-accent"></rect>
+              <rect x="204" y="42" width="120" height="64" rx="14" class="svg-card"></rect>
+              <rect x="204" y="118" width="120" height="30" rx="12" class="svg-card"></rect>
+              <rect x="204" y="154" width="120" height="30" rx="12" class="svg-card"></rect>
+            </svg>
+            <p>Built-in layouts already sit on a recursive tile model, so simple grids and uneven regions share the same core engine.</p>
+          </article>
+
+          <article class="showcase-card">
+            <h3>Traverse with arrows</h3>
+            <svg viewBox="0 0 360 220" role="img" aria-label="Illustration of moving between tiles with arrow directions">
+              <rect x="30" y="26" width="300" height="168" rx="18" class="svg-frame"></rect>
+              <rect x="48" y="44" width="126" height="66" rx="14" class="svg-focus"></rect>
+              <rect x="186" y="44" width="126" height="66" rx="14" class="svg-card"></rect>
+              <rect x="48" y="122" width="126" height="54" rx="14" class="svg-card"></rect>
+              <rect x="186" y="122" width="126" height="54" rx="14" class="svg-accent"></rect>
+              <path d="M111 115 V148" class="svg-arrow"></path>
+              <path d="M111 148 l-9 -10 M111 148 l9 -10" class="svg-arrow-tip"></path>
+              <path d="M179 77 H216" class="svg-arrow"></path>
+              <path d="M216 77 l-10 -8 M216 77 l-10 8" class="svg-arrow-tip"></path>
+            </svg>
+            <p>Directional traversal follows real tile geometry, not tile numbers, so it works across grids, uneven regions, and nested layouts.</p>
+          </article>
+
+          <article class="showcase-card">
+            <h3>Work across displays</h3>
+            <svg viewBox="0 0 360 220" role="img" aria-label="Illustration of moving a tiled window across displays">
+              <rect x="14" y="38" width="136" height="130" rx="18" class="svg-frame"></rect>
+              <rect x="210" y="20" width="136" height="130" rx="18" class="svg-frame"></rect>
+              <rect x="32" y="56" width="100" height="92" rx="14" class="svg-focus"></rect>
+              <rect x="228" y="38" width="100" height="38" rx="14" class="svg-card"></rect>
+              <rect x="228" y="84" width="100" height="48" rx="14" class="svg-accent"></rect>
+              <path d="M150 102 C177 102, 181 85, 210 85" class="svg-arrow"></path>
+              <path d="M210 85 l-9 -8 M210 85 l-9 8" class="svg-arrow-tip"></path>
+            </svg>
+            <p>When there is no valid tile in the requested direction on the current display, Tile Me continues searching across the display arrangement.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-alt" id="download">
+      <div class="container">
+        <div class="section-heading">
+          <p class="eyebrow">Download</p>
+          <h2>Get the latest release from GitHub</h2>
+          <p>Tile Me checks GitHub release metadata on this page and points the main button to the latest DMG when available.</p>
+        </div>
+
+        <div class="download-grid">
+          <article class="download-card">
+            <div class="download-heading">
+              <div>
+                <p class="download-label">Latest public build</p>
+                <h3 id="download-version">Fetching release info…</h3>
+              </div>
+              <span class="release-badge">GitHub Releases</span>
+            </div>
+
+            <div class="download-actions">
+              <a
+                class="button button-primary button-wide"
+                href="https://github.com/moontheripper/Tile-Me/releases/latest"
+                target="_blank"
+                rel="noopener noreferrer"
+                data-download-link
+              >
+                Download for macOS
+              </a>
+              <a
+                id="zip-download-link"
+                class="button button-secondary button-wide"
+                href="https://github.com/moontheripper/Tile-Me/releases/latest"
+                target="_blank"
+                rel="noopener noreferrer"
+                hidden
+              >
+                Download ZIP
+              </a>
+              <a
+                id="releases-link"
+                class="text-link"
+                href="https://github.com/moontheripper/Tile-Me/releases"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                View all releases
+              </a>
+            </div>
+
+            <p class="fine-print">
+              If the latest DMG cannot be resolved, the page falls back to the ZIP asset or the GitHub releases page.
+            </p>
+          </article>
+
+          <aside class="download-note-card">
+            <h3>Install Tile Me</h3>
+            <ol>
+              <li>Download the DMG.</li>
+              <li>Open it.</li>
+              <li>Drag Tile Me to Applications.</li>
+              <li>Open Tile Me from Applications.</li>
+            </ol>
+            <p class="fine-print">
+              Tile Me is currently distributed as an unsigned build. If macOS blocks it, open it once, then go to
+              <strong>System Settings &gt; Privacy &amp; Security</strong> and choose <strong>Open Anyway</strong>.
+              Future signed releases may improve the first-open experience.
+            </p>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="support">
+      <div class="container support-grid">
+        <div class="support-copy">
+          <p class="eyebrow">Support</p>
+          <h2>Help keep Tile Me moving</h2>
+          <p>
+            Tile Me exists because macOS window tiling felt more frustrating than it should be. If the app saves you time,
+            you can help support development and future work.
+          </p>
+          <div class="support-links">
+            <a class="button button-secondary" href="https://ko-fi.com/moontheripper" target="_blank" rel="noopener noreferrer">Support on Ko-fi</a>
+            <a class="text-link" href="mailto:briviamoon@gmail.com?subject=Tile%20Me%20Feedback">Send feedback by email</a>
+          </div>
+        </div>
+
+        <div class="support-card">
+          <h3>What support helps fund</h3>
+          <ul class="support-list">
+            <li>Release polish and packaging improvements</li>
+            <li>Future freeform tiling work on the existing layout engine</li>
+            <li>Ongoing bug fixes and macOS compatibility maintenance</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-alt" id="faq">
+      <div class="container">
+        <div class="section-heading">
+          <p class="eyebrow">FAQ</p>
+          <h2>Common questions before you download</h2>
+        </div>
+
+        <div class="faq-list">
+          <details>
+            <summary>What does Tile Me do?</summary>
+            <p>Tile Me is a native macOS menu bar utility that moves and resizes the focused window into keyboard-friendly tile layouts across one or more displays.</p>
+          </details>
+          <details>
+            <summary>Why does Tile Me need Accessibility permission?</summary>
+            <p>macOS requires Accessibility access before one app can inspect and move another app’s windows. Tile Me uses that permission only for window control features.</p>
+          </details>
+          <details>
+            <summary>What if macOS says the app is from an unidentified developer?</summary>
+            <p>Because current public builds are not signed and notarized, you may need to open the app once, then go to <strong>System Settings &gt; Privacy &amp; Security</strong> and choose <strong>Open Anyway</strong>.</p>
+          </details>
+          <details>
+            <summary>Can I customize shortcuts?</summary>
+            <p>Yes. Tile Me includes shortcut settings for direct tile placement, directional movement, maximize, and display movement.</p>
+          </details>
+          <details>
+            <summary>Where do I find help later?</summary>
+            <p>Quick Start and Support are both available from the app’s menu bar and from Settings, and Tile Me can also check GitHub releases for updates.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div>
+        <strong>Tile Me</strong>
+        <p>A native macOS menu bar tiling app for cleaner desktops and faster workflows.</p>
+      </div>
+      <div class="footer-links">
+        <a href="https://github.com/moontheripper/Tile-Me" target="_blank" rel="noopener noreferrer">GitHub repository</a>
+        <a href="https://github.com/moontheripper/Tile-Me/releases" target="_blank" rel="noopener noreferrer">Releases</a>
+        <a href="https://ko-fi.com/moontheripper" target="_blank" rel="noopener noreferrer">Support on Ko-fi</a>
+      </div>
+      <p class="footer-credit">© <span id="current-year"></span> Tile Me. Built for macOS utility workflows.</p>
+    </div>
+  </footer>
+
+  <script src="assets/site.js" defer></script>
+  <script src="https://storage.ko-fi.com/cdn/scripts/overlay-widget.js"></script>
+  <script>
+    if (window.kofiWidgetOverlay) {
+      window.kofiWidgetOverlay.draw("moontheripper", {
+        "type": "floating-chat",
+        "floating-chat.donateButton.text": "Support me",
+        "floating-chat.donateButton.background-color": "#5bc0de",
+        "floating-chat.donateButton.text-color": "#323842"
+      });
+    }
+  </script>
+</body>
+</html>
