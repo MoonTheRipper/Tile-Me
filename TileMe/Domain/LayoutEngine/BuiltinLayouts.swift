@@ -1,22 +1,46 @@
 import Foundation
 
+struct BuiltinLayoutGroup: Identifiable, Equatable, Sendable {
+    let id: String
+    let title: String
+    let layouts: [LayoutDefinition]
+}
+
+struct BuiltinLayoutSection: Identifiable, Equatable, Sendable {
+    let id: String
+    let title: String
+    let layouts: [LayoutDefinition]
+    let groups: [BuiltinLayoutGroup]
+}
+
 enum BuiltinLayouts {
-    static let halves = LayoutDefinition(
-        id: "halves",
-        name: "Halves",
-        root: .split(
-            id: "halves-root",
-            axis: .vertical,
-            children: [
-                TileChild(fraction: 1, node: .leaf(id: "halves-left")),
-                TileChild(fraction: 1, node: .leaf(id: "halves-right")),
-            ]
-        )
+    static let halves1x2 = halves(
+        id: "halves-1x2",
+        name: "1x2",
+        axis: .horizontal,
+        firstTileID: "halves-top",
+        secondTileID: "halves-bottom"
     )
 
-    static let grid2x2 = grid(id: "grid-2x2", name: "2x2", rows: 2, columns: 2)
-    static let grid3x3 = grid(id: "grid-3x3", name: "3x3", rows: 3, columns: 3)
-    static let grid4x4 = grid(id: "grid-4x4", name: "4x4", rows: 4, columns: 4)
+    static let halves2x1 = halves(
+        id: "halves",
+        name: "2x1",
+        axis: .vertical,
+        firstTileID: "halves-left",
+        secondTileID: "halves-right"
+    )
+
+    static let halves = halves2x1
+
+    static let grid2x2 = gridPreset(columns: 2, rows: 2)
+    static let grid3x3 = gridPreset(columns: 3, rows: 3)
+    static let grid4x4 = gridPreset(columns: 4, rows: 4)
+    static let gridPresetsByColumns: [Int: [LayoutDefinition]] = Dictionary(
+        uniqueKeysWithValues: (2...5).map { columns in
+            (columns, (2...5).map { rows in gridPreset(columns: columns, rows: rows) })
+        }
+    )
+    static let gridPresets = (2...5).flatMap { gridPresetsByColumns[$0] ?? [] }
 
     static let topPairBottomWide = LayoutDefinition(
         id: "nested-top-pair-bottom-wide",
@@ -64,8 +88,28 @@ enum BuiltinLayouts {
         )
     )
 
-    static let all = [halves, grid2x2, grid3x3, grid4x4]
+    static let all = [halves1x2, halves2x1] + gridPresets
     static let nestedExamples = [topPairBottomWide, largeLeftStackedRight]
+    static let presetSections = [
+        BuiltinLayoutSection(
+            id: "halves",
+            title: "Halves",
+            layouts: [halves1x2, halves2x1],
+            groups: []
+        ),
+        BuiltinLayoutSection(
+            id: "grid-presets",
+            title: "Grid Presets",
+            layouts: [],
+            groups: (2...5).map { columns in
+                BuiltinLayoutGroup(
+                    id: "grid-presets-\(columns)-columns",
+                    title: "\(columns) Columns",
+                    layouts: gridPresetsByColumns[columns] ?? []
+                )
+            }
+        ),
+    ]
 
     static var defaultLayout: LayoutDefinition {
         halves
@@ -75,7 +119,16 @@ enum BuiltinLayouts {
         (all + nestedExamples).first { $0.id == id }
     }
 
-    static func grid(id: String, name: String, rows: Int, columns: Int) -> LayoutDefinition {
+    static func gridPreset(columns: Int, rows: Int) -> LayoutDefinition {
+        grid(
+            id: "grid-\(columns)x\(rows)",
+            name: "\(columns)x\(rows)",
+            columns: columns,
+            rows: rows
+        )
+    }
+
+    static func grid(id: String, name: String, columns: Int, rows: Int) -> LayoutDefinition {
         precondition(rows > 0 && columns > 0, "Grid dimensions must be greater than zero")
 
         let rowChildren = (1...rows).map { row in
@@ -96,6 +149,27 @@ enum BuiltinLayouts {
             id: id,
             name: name,
             root: .split(id: "\(id)-root", axis: .horizontal, children: rowChildren)
+        )
+    }
+
+    private static func halves(
+        id: String,
+        name: String,
+        axis: SplitAxis,
+        firstTileID: String,
+        secondTileID: String
+    ) -> LayoutDefinition {
+        LayoutDefinition(
+            id: id,
+            name: name,
+            root: .split(
+                id: "\(id)-root",
+                axis: axis,
+                children: [
+                    TileChild(fraction: 1, node: .leaf(id: firstTileID)),
+                    TileChild(fraction: 1, node: .leaf(id: secondTileID)),
+                ]
+            )
         )
     }
 }

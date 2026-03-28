@@ -2,6 +2,18 @@
 
 All notable changes to Tile Me are documented in this file.
 
+## [1.0.2] - 2026-03-28
+
+### Added
+
+- built-in preset coverage for `1x2`, `2x1`, and every grid from `2x2` through `5x5`
+- compact grouped layout menus for preset selection in both the menu bar and Settings
+
+### Changed
+
+- updated app and release metadata for `v1.0.2`
+- kept dense-layout window moves on the existing constrained-fit reporting path instead of treating app-side clamping as an engine failure
+
 ## [1.0.1] - 2026-03-28
 
 ### Added

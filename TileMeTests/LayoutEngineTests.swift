@@ -19,6 +19,18 @@ final class LayoutEngineTests: XCTestCase {
         XCTAssertEqual(frames[1].frame, CGRect(x: 600, y: 0, width: 600, height: 800))
     }
 
+    func testVerticalHalvesLayoutResolvesTopAndBottomTiles() {
+        let bounds = CGRect(x: 0, y: 0, width: 1200, height: 800)
+
+        let frames = engine.resolve(layout: BuiltinLayouts.halves1x2, in: bounds)
+
+        XCTAssertEqual(frames.count, 2)
+        XCTAssertEqual(frames[0].tileID, "halves-top")
+        XCTAssertEqual(frames[0].frame, CGRect(x: 0, y: 400, width: 1200, height: 400))
+        XCTAssertEqual(frames[1].tileID, "halves-bottom")
+        XCTAssertEqual(frames[1].frame, CGRect(x: 0, y: 0, width: 1200, height: 400))
+    }
+
     func testGridLayoutUsesReadingOrderAndStableTileIdentifiers() {
         let bounds = CGRect(x: 0, y: 0, width: 900, height: 900)
 
@@ -44,7 +56,7 @@ final class LayoutEngineTests: XCTestCase {
     }
 
     func testGridHelperIsReadyForEightByEightLayouts() {
-        let layout = BuiltinLayouts.grid(id: "grid-8x8", name: "8x8", rows: 8, columns: 8)
+        let layout = BuiltinLayouts.grid(id: "grid-8x8", name: "8x8", columns: 8, rows: 8)
         let bounds = CGRect(x: 0, y: 0, width: 800, height: 800)
 
         let frames = engine.resolve(layout: layout, in: bounds)
@@ -56,6 +68,33 @@ final class LayoutEngineTests: XCTestCase {
         XCTAssertEqual(frames.count, 64)
         XCTAssertEqual(frames[0].frame, CGRect(x: 0, y: 700, width: 100, height: 100))
         XCTAssertEqual(frames.last?.frame, CGRect(x: 700, y: 0, width: 100, height: 100))
+    }
+
+    func testGridPresetFamilyCoversTwoThroughFiveColumnsAndRows() {
+        let bounds = CGRect(x: 0, y: 0, width: 1000, height: 1000)
+
+        XCTAssertEqual(BuiltinLayouts.gridPresets.count, 16)
+        XCTAssertEqual(BuiltinLayouts.all.count, 18)
+
+        for columns in 2...5 {
+            let presets = BuiltinLayouts.gridPresetsByColumns[columns]
+
+            XCTAssertEqual(presets?.map(\.name), ["\(columns)x2", "\(columns)x3", "\(columns)x4", "\(columns)x5"])
+
+            for rows in 2...5 {
+                guard let layout = presets?.first(where: { $0.name == "\(columns)x\(rows)" }) else {
+                    XCTFail("Missing preset \(columns)x\(rows)")
+                    continue
+                }
+
+                let frames = engine.resolve(layout: layout, in: bounds)
+
+                XCTAssertEqual(layout.tileCount, columns * rows)
+                XCTAssertEqual(layout.tileIDs.first, "grid-\(columns)x\(rows)-r1-c1")
+                XCTAssertEqual(layout.tileIDs.last, "grid-\(columns)x\(rows)-r\(rows)-c\(columns)")
+                XCTAssertEqual(frames.count, columns * rows)
+            }
+        }
     }
 
     func testNestedSplitExampleResolvesExpectedFrames() {

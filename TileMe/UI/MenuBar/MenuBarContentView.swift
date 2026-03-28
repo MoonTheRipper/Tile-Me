@@ -202,16 +202,8 @@ struct MenuBarContentView: View {
             Divider()
 
             Menu("Apply Layout") {
-                ForEach(BuiltinLayouts.all) { layout in
-                    Button {
-                        menuBarWorkflowController.apply(layoutID: layout.id, to: display.id)
-                    } label: {
-                        if currentResolvedLayoutID == layout.id {
-                            Label(layout.name, systemImage: "checkmark")
-                        } else {
-                            Text(layout.name)
-                        }
-                    }
+                layoutPresetMenus(selectedLayoutID: currentResolvedLayoutID) { layout in
+                    menuBarWorkflowController.apply(layoutID: layout.id, to: display.id)
                 }
             }
 
@@ -235,6 +227,55 @@ struct MenuBarContentView: View {
             }
         } label: {
             Label(display.name, systemImage: display.isBuiltIn ? "laptopcomputer" : "display")
+        }
+    }
+
+    @ViewBuilder
+    private func layoutPresetMenus(
+        selectedLayoutID: String,
+        onSelect: @escaping (LayoutDefinition) -> Void
+    ) -> some View {
+        ForEach(BuiltinLayouts.presetSections) { section in
+            Menu(section.title) {
+                if !section.layouts.isEmpty {
+                    ForEach(section.layouts) { layout in
+                        layoutPresetButton(
+                            layout: layout,
+                            selectedLayoutID: selectedLayoutID,
+                            onSelect: onSelect
+                        )
+                    }
+                }
+
+                ForEach(section.groups) { group in
+                    Menu(group.title) {
+                        ForEach(group.layouts) { layout in
+                            layoutPresetButton(
+                                layout: layout,
+                                selectedLayoutID: selectedLayoutID,
+                                onSelect: onSelect
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func layoutPresetButton(
+        layout: LayoutDefinition,
+        selectedLayoutID: String,
+        onSelect: @escaping (LayoutDefinition) -> Void
+    ) -> some View {
+        Button {
+            onSelect(layout)
+        } label: {
+            if selectedLayoutID == layout.id {
+                Label(layout.name, systemImage: "checkmark")
+            } else {
+                Text(layout.name)
+            }
         }
     }
 }

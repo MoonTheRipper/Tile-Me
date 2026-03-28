@@ -20,10 +20,10 @@ The codebase stays split into clear native layers:
 - `TileMe/Domain`: recursive layout engine, display logic, workspace assignment logic, and shortcut models
 - `TileMe/Infrastructure`: Accessibility control, hotkey registration, persistence, and system integrations
 
-## Features In v1.0.1
+## Features In v1.0.2
 
 - native macOS menu bar app with a restrained Settings window
-- built-in layouts: `Halves`, `2x2`, `3x3`, and `4x4`
+- built-in preset families: `1x2`, `2x1`, and grids from `2x2` through `5x5`
 - recursive split-tree layout engine ready for uneven and nested layouts
 - per-display layout assignment, copy, and mirror behavior
 - focused-window tiling, maximize, and next-display actions
@@ -114,10 +114,11 @@ Package a release build:
 
 ## Known Limitations
 
-- v1.0.1 ships built-in layouts only; there is no dynamic freeform tiling editor yet
+- v1.0.2 ships built-in layouts only; there is no dynamic freeform tiling editor yet
 - nested uneven layouts are supported by the engine, but not yet exposed as user-editable presets in the UI
+- dense layouts up to `5x5` are supported, but some macOS app windows may clamp or resist very small tile sizes
 - some macOS windows cannot be moved or resized through Accessibility APIs
-- fullscreen-style behavior is implemented as visible-frame maximize placement in v1.0.1
+- fullscreen-style behavior is implemented as visible-frame maximize placement in v1.0.2
 
 ## Troubleshooting
 

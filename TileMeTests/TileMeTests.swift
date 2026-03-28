@@ -11,6 +11,14 @@ final class TileMeTests: XCTestCase {
         XCTAssertEqual(BuiltinLayouts.nestedExamples.count, 2)
     }
 
+    func testPresetSectionsGroupHalvesAndGridFamiliesForMenus() {
+        XCTAssertEqual(BuiltinLayouts.presetSections.map(\.title), ["Halves", "Grid Presets"])
+        XCTAssertEqual(BuiltinLayouts.presetSections[0].layouts.map(\.name), ["1x2", "2x1"])
+        XCTAssertEqual(BuiltinLayouts.presetSections[1].groups.map(\.title), ["2 Columns", "3 Columns", "4 Columns", "5 Columns"])
+        XCTAssertEqual(BuiltinLayouts.presetSections[1].groups[0].layouts.map(\.name), ["2x2", "2x3", "2x4", "2x5"])
+        XCTAssertEqual(BuiltinLayouts.presetSections[1].groups[3].layouts.map(\.name), ["5x2", "5x3", "5x4", "5x5"])
+    }
+
     @MainActor
     func testDisplayManagerUsesInjectedDiscoveryAndSortsDisplays() {
         let manager = DisplayManager(

@@ -31,7 +31,7 @@ struct SettingsRootView: View {
                 ShortcutEditorView()
             }
 
-            PreferencesSection(title: "Layouts", summary: "V1 ships built-in recursive split-tree layouts and keeps the layout engine ready for deeper nested custom layouts later.") {
+            PreferencesSection(title: "Layouts", summary: "Tile Me ships built-in recursive split-tree presets from halves through dense grids, while keeping the engine ready for deeper nested layouts later.") {
                 BuiltinLayoutSummaryView()
             }
 
@@ -108,12 +108,15 @@ private struct SettingsOverviewView: View {
 private struct BuiltinLayoutSummaryView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("Built-in presets: Halves, 2x2, 3x3, and 4x4.")
+            Text("Built-in presets: 1x2, 2x1, and grids from 2x2 through 5x5.")
 
             Text("Nested split examples already exist in the domain layer and tests, so future custom layouts can grow from the same tree model without replacing the engine.")
                 .foregroundStyle(.secondary)
 
-            Text("The menu keeps quick selection focused on built-in presets in v1.0.1.")
+            Text("Dense layouts are available, but some apps may clamp very small windows instead of fitting every tile exactly.")
+                .foregroundStyle(.secondary)
+
+            Text("The menu keeps quick selection grouped by preset family in v1.0.2.")
                 .font(.caption)
                 .foregroundStyle(.secondary)
         }
@@ -305,13 +308,14 @@ private struct DisplayAssignmentCard: View {
                 .font(.caption)
                 .foregroundStyle(.secondary)
 
-            Picker("Layout", selection: selectedLayoutID) {
-                ForEach(BuiltinLayouts.all) { layout in
-                    Text(layout.name).tag(layout.id)
+            LabeledContent("Layout") {
+                LayoutPresetSelectionMenu(
+                    selectedLayoutID: selectedLayoutID.wrappedValue,
+                    buttonTitle: layoutName(for: selectedLayoutID.wrappedValue)
+                ) { layout in
+                    workspaceStore.setLayout(id: layout.id, for: display.id)
                 }
             }
-            .pickerStyle(.menu)
-            .controlSize(.small)
 
             HStack(spacing: 8) {
                 Menu("Copy Layout From") {
@@ -357,5 +361,47 @@ private struct DisplayAssignmentCard: View {
 
     private func layoutName(for layoutID: String) -> String {
         BuiltinLayouts.definition(id: layoutID)?.name ?? layoutID
+    }
+}
+
+private struct LayoutPresetSelectionMenu: View {
+    let selectedLayoutID: String
+    let buttonTitle: String
+    let onSelect: (LayoutDefinition) -> Void
+
+    var body: some View {
+        Menu(buttonTitle) {
+            ForEach(BuiltinLayouts.presetSections) { section in
+                Menu(section.title) {
+                    if !section.layouts.isEmpty {
+                        ForEach(section.layouts) { layout in
+                            layoutButton(layout)
+                        }
+                    }
+
+                    ForEach(section.groups) { group in
+                        Menu(group.title) {
+                            ForEach(group.layouts) { layout in
+                                layoutButton(layout)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        .controlSize(.small)
+    }
+
+    @ViewBuilder
+    private func layoutButton(_ layout: LayoutDefinition) -> some View {
+        Button {
+            onSelect(layout)
+        } label: {
+            if layout.id == selectedLayoutID {
+                Label(layout.name, systemImage: "checkmark")
+            } else {
+                Text(layout.name)
+            }
+        }
     }
 }

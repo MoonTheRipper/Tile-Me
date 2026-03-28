@@ -99,10 +99,10 @@ private struct TutorialPageView: View {
             }
             .foregroundStyle(.secondary)
 
-            Text("You can adjust these shortcuts later in Settings, along with display assignments and built-in layout choices.")
+            Text("You can adjust these shortcuts later in Settings, along with display assignments and built-in layouts ranging from halves to 5x5 grids.")
                 .foregroundStyle(.secondary)
 
-            Text("Quick Start can be reopened later from Help in the menu bar or from Settings. Check for Updates is available from the menu bar and Settings.")
+            Text("Quick Start can be reopened later from Help in the menu bar or from Settings. Dense layouts are available, but some app windows may clamp very small tiles.")
                 .font(.caption)
                 .foregroundStyle(.secondary)
 
