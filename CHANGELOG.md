@@ -2,6 +2,19 @@
 
 All notable changes to Tile Me are documented in this file.
 
+## [1.0.1] - 2026-03-28
+
+### Added
+
+- lightweight GitHub release update checks with automatic launch checks and a manual `Check for Updates…` action
+- restrained native update prompts with `Download Update`, `Remind Me Later`, and `Skip This Version`
+- a simple Settings toggle for automatic update checks
+
+### Changed
+
+- updated app and release metadata for `v1.0.1`
+- kept update download handoff in the user’s default browser without adding an in-app installer
+
 ## [1.0.0] - 2026-03-28
 
 ### Added

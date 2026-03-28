@@ -4,8 +4,15 @@ import Foundation
 final class AppModel: ObservableObject {
     let appName = "Tile Me"
 
+    var versionString: String {
+        Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "1.0.1"
+    }
+
+    var currentVersion: SemanticVersion? {
+        SemanticVersion(versionString)
+    }
+
     var versionDescription: String {
-        let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "1.0.0"
-        return "Version \(version)"
+        "Version \(versionString)"
     }
 }

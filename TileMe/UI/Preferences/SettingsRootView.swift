@@ -5,6 +5,7 @@ struct SettingsRootView: View {
     @EnvironmentObject private var appModel: AppModel
     @EnvironmentObject private var displayManager: DisplayManager
     @EnvironmentObject private var releaseExperienceController: ReleaseExperienceController
+    @EnvironmentObject private var updateController: UpdateController
     @EnvironmentObject private var workspaceStore: WorkspaceStore
     @EnvironmentObject private var accessibilityPermissionStore: AccessibilityPermissionStore
 
@@ -16,6 +17,10 @@ struct SettingsRootView: View {
 
             PreferencesSection(title: "Permissions", summary: permissionsSummary) {
                 AccessibilityOnboardingView()
+            }
+
+            PreferencesSection(title: "Updates", summary: "Check GitHub releases for newer versions and open the download page when an update is available.") {
+                UpdatesSettingsView()
             }
 
             PreferencesSection(title: "Displays", summary: "Assign a layout per display, or reuse another display's layout by copying or mirroring it.") {
@@ -108,10 +113,38 @@ private struct BuiltinLayoutSummaryView: View {
             Text("Nested split examples already exist in the domain layer and tests, so future custom layouts can grow from the same tree model without replacing the engine.")
                 .foregroundStyle(.secondary)
 
-            Text("The menu keeps quick selection focused on built-in presets in v1.0.0.")
+            Text("The menu keeps quick selection focused on built-in presets in v1.0.1.")
                 .font(.caption)
                 .foregroundStyle(.secondary)
         }
+    }
+}
+
+private struct UpdatesSettingsView: View {
+    @EnvironmentObject private var updateController: UpdateController
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Toggle(
+                "Check for updates automatically",
+                isOn: Binding(
+                    get: { updateController.automaticallyChecksEnabled },
+                    set: { updateController.setAutomaticallyChecksEnabled($0) }
+                )
+            )
+
+            HStack(spacing: 8) {
+                Button(updateController.isCheckingForUpdates ? "Checking for Updates…" : "Check for Updates…") {
+                    updateController.checkForUpdatesManually()
+                }
+                .disabled(updateController.isCheckingForUpdates)
+            }
+
+            Text("Downloads open in your default browser.")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+        }
+        .controlSize(.small)
     }
 }
 

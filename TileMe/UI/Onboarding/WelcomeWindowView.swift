@@ -102,7 +102,7 @@ private struct TutorialPageView: View {
             Text("You can adjust these shortcuts later in Settings, along with display assignments and built-in layout choices.")
                 .foregroundStyle(.secondary)
 
-            Text("Quick Start can be reopened later from Help in the menu bar or from Settings.")
+            Text("Quick Start can be reopened later from Help in the menu bar or from Settings. Check for Updates is available from the menu bar and Settings.")
                 .font(.caption)
                 .foregroundStyle(.secondary)
 

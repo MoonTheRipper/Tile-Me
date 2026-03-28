@@ -6,7 +6,12 @@ enum ReleaseConfiguration {
     static let feedbackEmailAddress = "briviamoon@gmail.com"
     static let gitHubProjectURL = URL(string: "https://github.com/moontheripper/Tile-Me")!
     static let gitHubIssuesURL = URL(string: "https://github.com/moontheripper/Tile-Me/issues")!
+    static let gitHubLatestReleaseAPIURL = URL(string: "https://api.github.com/repos/moontheripper/Tile-Me/releases/latest")!
     static let welcomeCompletionDefaultsKey = "tileme.release.welcome.completed"
+    static let automaticUpdateChecksDefaultsKey = "tileme.release.updates.automaticCheckEnabled"
+    static let skippedUpdateVersionDefaultsKey = "tileme.release.updates.skippedVersion"
+    static let updateRemindAfterDateDefaultsKey = "tileme.release.updates.remindAfterDate"
+    static let updateRemindLaterInterval: TimeInterval = 60 * 60 * 24 * 7
 
     static var bugReportURL: URL {
         mailtoURL(

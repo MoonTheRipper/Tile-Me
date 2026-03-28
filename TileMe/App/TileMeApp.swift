@@ -6,6 +6,7 @@ struct TileMeApp: App {
     @StateObject private var appModel: AppModel
     @StateObject private var displayManager: DisplayManager
     @StateObject private var releaseExperienceController: ReleaseExperienceController
+    @StateObject private var updateController: UpdateController
     @StateObject private var workspaceStore: WorkspaceStore
     @StateObject private var accessibilityPermissionStore: AccessibilityPermissionStore
     @StateObject private var shortcutCoordinator: ShortcutCoordinator
@@ -15,6 +16,7 @@ struct TileMeApp: App {
         let appModel = AppModel()
         let displayManager = DisplayManager()
         let releaseExperienceController = ReleaseExperienceController()
+        let updateController = UpdateController(currentVersionString: appModel.versionString)
         let workspaceStore = WorkspaceStore()
         let accessibilityPermissionStore = AccessibilityPermissionStore()
         let shortcutActionExecutor = ShortcutActionExecutor(displayProvider: displayManager)
@@ -32,6 +34,7 @@ struct TileMeApp: App {
         _appModel = StateObject(wrappedValue: appModel)
         _displayManager = StateObject(wrappedValue: displayManager)
         _releaseExperienceController = StateObject(wrappedValue: releaseExperienceController)
+        _updateController = StateObject(wrappedValue: updateController)
         _workspaceStore = StateObject(wrappedValue: workspaceStore)
         _accessibilityPermissionStore = StateObject(wrappedValue: accessibilityPermissionStore)
         _shortcutCoordinator = StateObject(wrappedValue: shortcutCoordinator)
@@ -39,6 +42,7 @@ struct TileMeApp: App {
 
         DispatchQueue.main.async {
             releaseExperienceController.presentWelcomeIfNeeded()
+            updateController.scheduleAutomaticLaunchCheck()
         }
     }
 
@@ -48,6 +52,7 @@ struct TileMeApp: App {
                 .environmentObject(appModel)
                 .environmentObject(displayManager)
                 .environmentObject(releaseExperienceController)
+                .environmentObject(updateController)
                 .environmentObject(workspaceStore)
                 .environmentObject(accessibilityPermissionStore)
                 .environmentObject(menuBarWorkflowController)
@@ -59,6 +64,7 @@ struct TileMeApp: App {
                 .environmentObject(appModel)
                 .environmentObject(displayManager)
                 .environmentObject(releaseExperienceController)
+                .environmentObject(updateController)
                 .environmentObject(workspaceStore)
                 .environmentObject(accessibilityPermissionStore)
                 .environmentObject(shortcutCoordinator)

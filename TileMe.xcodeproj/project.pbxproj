@@ -43,6 +43,10 @@
 		AA0000000000000000000234 /* ReleaseExperienceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000135 /* ReleaseExperienceController.swift */; };
 		AA0000000000000000000235 /* WelcomeWindowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000136 /* WelcomeWindowView.swift */; };
 		AA0000000000000000000236 /* WelcomeExperienceStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000137 /* WelcomeExperienceStoreTests.swift */; };
+		AA0000000000000000000237 /* UpdateController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000138 /* UpdateController.swift */; };
+		AA0000000000000000000238 /* SemanticVersion.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000139 /* SemanticVersion.swift */; };
+		AA0000000000000000000239 /* UpdateChecking.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000140 /* UpdateChecking.swift */; };
+		AA0000000000000000000240 /* UpdateCheckingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000141 /* UpdateCheckingTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -95,6 +99,10 @@
 		AA0000000000000000000135 /* ReleaseExperienceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReleaseExperienceController.swift; sourceTree = "<group>"; };
 		AA0000000000000000000136 /* WelcomeWindowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeWindowView.swift; sourceTree = "<group>"; };
 		AA0000000000000000000137 /* WelcomeExperienceStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeExperienceStoreTests.swift; sourceTree = "<group>"; };
+		AA0000000000000000000138 /* UpdateController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateController.swift; sourceTree = "<group>"; };
+		AA0000000000000000000139 /* SemanticVersion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SemanticVersion.swift; sourceTree = "<group>"; };
+		AA0000000000000000000140 /* UpdateChecking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateChecking.swift; sourceTree = "<group>"; };
+		AA0000000000000000000141 /* UpdateCheckingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateCheckingTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -153,6 +161,7 @@
 				AA0000000000000000000135 /* ReleaseExperienceController.swift */,
 				AA0000000000000000000122 /* ShortcutCoordinator.swift */,
 				AA0000000000000000000101 /* TileMeApp.swift */,
+				AA0000000000000000000138 /* UpdateController.swift */,
 			);
 			path = App;
 			sourceTree = "<group>";
@@ -177,6 +186,7 @@
 				AA0000000000000000000127 /* ShortcutEngineTests.swift */,
 				AA0000000000000000000131 /* TileTraversalServiceTests.swift */,
 				AA0000000000000000000105 /* TileMeTests.swift */,
+				AA0000000000000000000141 /* UpdateCheckingTests.swift */,
 				AA0000000000000000000137 /* WelcomeExperienceStoreTests.swift */,
 				AA0000000000000000000115 /* WorkspaceStoreTests.swift */,
 			);
@@ -211,6 +221,7 @@
 			children = (
 				AA0000000000000000000106 /* DisplayProfile.swift */,
 				AA0000000000000000000107 /* LayoutDefinition.swift */,
+				AA0000000000000000000139 /* SemanticVersion.swift */,
 				AA0000000000000000000108 /* ShortcutAction.swift */,
 				AA0000000000000000000109 /* WorkspaceProfile.swift */,
 			);
@@ -281,6 +292,7 @@
 		AA0000000000000000000022 /* System */ = {
 			isa = PBXGroup;
 			children = (
+				AA0000000000000000000140 /* UpdateChecking.swift */,
 			);
 			path = System;
 			sourceTree = "<group>";
@@ -428,6 +440,7 @@
 				AA0000000000000000000202 /* AppModel.swift in Sources */,
 				AA0000000000000000000206 /* DisplayProfile.swift in Sources */,
 				AA0000000000000000000207 /* LayoutDefinition.swift in Sources */,
+				AA0000000000000000000238 /* SemanticVersion.swift in Sources */,
 				AA0000000000000000000208 /* ShortcutAction.swift in Sources */,
 				AA0000000000000000000201 /* TileMeApp.swift in Sources */,
 				AA0000000000000000000209 /* WorkspaceProfile.swift in Sources */,
@@ -437,6 +450,7 @@
 				AA0000000000000000000228 /* MenuBarWorkflowController.swift in Sources */,
 				AA0000000000000000000234 /* ReleaseExperienceController.swift in Sources */,
 				AA0000000000000000000222 /* ShortcutCoordinator.swift in Sources */,
+				AA0000000000000000000237 /* UpdateController.swift in Sources */,
 				AA0000000000000000000223 /* ShortcutActionExecutor.swift in Sources */,
 				AA0000000000000000000224 /* ShortcutRegistrationPlanner.swift in Sources */,
 				AA0000000000000000000230 /* TileTraversalService.swift in Sources */,
@@ -445,6 +459,7 @@
 				AA0000000000000000000219 /* AccessibilityWindowController.swift in Sources */,
 				AA0000000000000000000220 /* FocusedWindowCommandRunner.swift in Sources */,
 				AA0000000000000000000225 /* GlobalHotkeyManager.swift in Sources */,
+				AA0000000000000000000239 /* UpdateChecking.swift in Sources */,
 				AA0000000000000000000216 /* AccessibilityOnboardingView.swift in Sources */,
 				AA0000000000000000000203 /* MenuBarContentView.swift in Sources */,
 				AA0000000000000000000217 /* PreferencesSection.swift in Sources */,
@@ -465,6 +480,7 @@
 				AA0000000000000000000227 /* ShortcutEngineTests.swift in Sources */,
 				AA0000000000000000000231 /* TileTraversalServiceTests.swift in Sources */,
 				AA0000000000000000000205 /* TileMeTests.swift in Sources */,
+				AA0000000000000000000240 /* UpdateCheckingTests.swift in Sources */,
 				AA0000000000000000000236 /* WelcomeExperienceStoreTests.swift in Sources */,
 				AA0000000000000000000215 /* WorkspaceStoreTests.swift in Sources */,
 			);
@@ -530,7 +546,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 1.0.0;
+				MARKETING_VERSION = 1.0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.rippermoon.TileMe;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -557,7 +573,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 1.0.0;
+				MARKETING_VERSION = 1.0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.rippermoon.TileMe;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;

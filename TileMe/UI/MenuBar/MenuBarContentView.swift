@@ -5,6 +5,7 @@ struct MenuBarContentView: View {
     @EnvironmentObject private var appModel: AppModel
     @EnvironmentObject private var displayManager: DisplayManager
     @EnvironmentObject private var releaseExperienceController: ReleaseExperienceController
+    @EnvironmentObject private var updateController: UpdateController
     @EnvironmentObject private var workspaceStore: WorkspaceStore
     @EnvironmentObject private var accessibilityPermissionStore: AccessibilityPermissionStore
     @EnvironmentObject private var menuBarWorkflowController: MenuBarWorkflowController
@@ -38,6 +39,11 @@ struct MenuBarContentView: View {
             }
 
             Divider()
+
+            Button(updateController.isCheckingForUpdates ? "Checking for Updates…" : "Check for Updates…") {
+                updateController.checkForUpdatesManually()
+            }
+            .disabled(updateController.isCheckingForUpdates)
 
             Button("Help / Quick Start…") {
                 releaseExperienceController.presentHelp()
