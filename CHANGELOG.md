@@ -2,6 +2,18 @@
 
 All notable changes to Tile Me are documented in this file.
 
+## [1.0.5] - 2026-04-02
+
+### Fixed
+
+- corrected Accessibility coordinate reflection for displays whose AppKit `frame` is vertically offset in Display Arrangement
+- fixed `2x2` top and bottom tile placement on offset displays so bottom-row windows no longer fall below the bezel area and upward moves now land in the true top tile
+
+### Changed
+
+- replaced the prior inset-only regression with a test that models a vertically offset display and verifies top and bottom `2x2` tiles map to the correct global Accessibility coordinates
+- updated app, website, and release metadata for `v1.0.5`
+
 ## [1.0.4] - 2026-04-02
 
 ### Fixed

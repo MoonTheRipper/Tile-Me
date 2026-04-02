@@ -18,24 +18,25 @@ final class AccessibilityServicesTests: XCTestCase {
     }
 
     func testAccessibilityCoordinateTransformerRoundTripsFramesOnUpperDisplay() {
-        let lowerDisplay = CGRect(x: 0, y: 0, width: 1200, height: 760)
-        let upperDisplay = CGRect(x: 0, y: 760, width: 1200, height: 760)
-        let transformer = AccessibilityCoordinateTransformer(screenFrames: [lowerDisplay, upperDisplay])
-        let appFrame = CGRect(x: 0, y: 760, width: 600, height: 380)
+        let menuBarDisplay = CGRect(x: 0, y: 0, width: 1200, height: 800)
+        let upperDisplay = CGRect(x: 0, y: 800, width: 1200, height: 800)
+        let transformer = AccessibilityCoordinateTransformer(screenFrames: [menuBarDisplay, upperDisplay])
+        let appFrame = CGRect(x: 0, y: 800, width: 600, height: 400)
 
         let accessibilityFrame = transformer.accessibilityFrame(fromAppFrame: appFrame)
         let roundTrippedFrame = transformer.appFrame(fromAccessibilityFrame: accessibilityFrame)
 
-        XCTAssertEqual(accessibilityFrame, CGRect(x: 0, y: 1140, width: 600, height: 380))
+        XCTAssertEqual(accessibilityFrame, CGRect(x: 0, y: -400, width: 600, height: 400))
         XCTAssertEqual(roundTrippedFrame, appFrame)
     }
 
-    func testAccessibilityCoordinateTransformerUsesFullDisplayFrameForVisibleFrameTargets() {
-        let fullDisplayFrame = CGRect(x: 0, y: 0, width: 1200, height: 800)
-        let visibleFrame = CGRect(x: 0, y: 40, width: 1200, height: 760)
+    func testAccessibilityCoordinateTransformerUsesMenuBarScreenTopForOffsetDisplayTiles() {
+        let offsetDisplayFrame = CGRect(x: 1200, y: 40, width: 1200, height: 800)
+        let menuBarDisplayFrame = CGRect(x: 0, y: 0, width: 1200, height: 800)
+        let visibleFrame = CGRect(x: 1200, y: 80, width: 1200, height: 720)
         let layoutFrames = LayoutEngine().resolve(layout: BuiltinLayouts.grid2x2, in: visibleFrame)
         let transformer = AccessibilityCoordinateTransformer(
-            screenFrames: [fullDisplayFrame]
+            screenFrames: [offsetDisplayFrame, menuBarDisplayFrame]
         )
 
         let topLeftTile = layoutFrames[0].frame
@@ -43,10 +44,10 @@ final class AccessibilityServicesTests: XCTestCase {
         let topAccessibilityFrame = transformer.accessibilityFrame(fromAppFrame: topLeftTile)
         let bottomAccessibilityFrame = transformer.accessibilityFrame(fromAppFrame: bottomLeftTile)
 
-        XCTAssertEqual(topLeftTile, CGRect(x: 0, y: 420, width: 600, height: 380))
-        XCTAssertEqual(bottomLeftTile, CGRect(x: 0, y: 40, width: 600, height: 380))
-        XCTAssertEqual(topAccessibilityFrame, CGRect(x: 0, y: 0, width: 600, height: 380))
-        XCTAssertEqual(bottomAccessibilityFrame, CGRect(x: 0, y: 380, width: 600, height: 380))
+        XCTAssertEqual(topLeftTile, CGRect(x: 1200, y: 440, width: 600, height: 360))
+        XCTAssertEqual(bottomLeftTile, CGRect(x: 1200, y: 80, width: 600, height: 360))
+        XCTAssertEqual(topAccessibilityFrame, CGRect(x: 1200, y: 0, width: 600, height: 360))
+        XCTAssertEqual(bottomAccessibilityFrame, CGRect(x: 1200, y: 360, width: 600, height: 360))
         XCTAssertEqual(transformer.appFrame(fromAccessibilityFrame: topAccessibilityFrame), topLeftTile)
         XCTAssertEqual(transformer.appFrame(fromAccessibilityFrame: bottomAccessibilityFrame), bottomLeftTile)
     }

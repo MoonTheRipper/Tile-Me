@@ -21,27 +21,22 @@ struct AccessibilityCoordinateTransformer: Sendable {
     }
 
     private func reflectedFrame(from frame: CGRect) -> CGRect {
-        guard let screenFrame = screenFrame(containing: frame) else {
+        // AXPosition uses a global top-left origin anchored to the menu bar screen.
+        guard let accessibilityGlobalTop = accessibilityGlobalTop else {
             return frame
         }
 
         return CGRect(
             x: frame.minX,
-            y: screenFrame.minY + screenFrame.maxY - frame.maxY,
+            y: accessibilityGlobalTop - frame.maxY,
             width: frame.width,
             height: frame.height
         )
     }
 
-    private func screenFrame(containing frame: CGRect) -> CGRect? {
-        let midpoint = CGPoint(x: frame.midX, y: frame.midY)
-        if let exactMatch = screenFrames.first(where: { $0.contains(midpoint) }) {
-            return exactMatch
-        }
-
-        return screenFrames.max { lhs, rhs in
-            lhs.intersection(frame).area < rhs.intersection(frame).area
-        }
+    private var accessibilityGlobalTop: CGFloat? {
+        screenFrames.first(where: { $0.contains(CGPoint.zero) })?.maxY
+            ?? screenFrames.first?.maxY
     }
 }
 
