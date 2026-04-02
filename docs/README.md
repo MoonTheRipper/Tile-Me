@@ -19,7 +19,7 @@ The public Tile Me landing page lives in `docs/` so it can be published directly
 
 The main download button uses the GitHub Releases API:
 
-- it requests the latest release metadata for `moontheripper/Tile-Me`
+- it requests the latest release metadata for `MoonTheRipper/Tile-Me`
 - it prefers a `.dmg` asset
 - it falls back to `.zip`
 - if neither asset can be resolved, it falls back to the GitHub releases page

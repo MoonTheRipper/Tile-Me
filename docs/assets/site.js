@@ -1,7 +1,8 @@
 const SiteConfiguration = {
-  repoUrl: "https://github.com/moontheripper/Tile-Me",
-  releasesUrl: "https://github.com/moontheripper/Tile-Me/releases",
-  latestReleaseApiUrl: "https://api.github.com/repos/moontheripper/Tile-Me/releases/latest",
+  currentReleaseVersion: "1.0.3",
+  repoUrl: "https://github.com/MoonTheRipper/Tile-Me",
+  releasesUrl: "https://github.com/MoonTheRipper/Tile-Me/releases",
+  latestReleaseApiUrl: "https://api.github.com/repos/MoonTheRipper/Tile-Me/releases/latest",
   themeStorageKey: "tileme.site.theme",
 };
 
@@ -171,10 +172,12 @@ async function fetchLatestRelease() {
     });
   } catch (error) {
     updateDownloadUI({
-      primaryUrl: `${SiteConfiguration.releasesUrl}/latest`,
-      primaryLabel: "Open latest release",
-      versionLabel: "Latest",
-      statusText: "Latest release info is unavailable right now. Use GitHub Releases as the fallback.",
+      primaryUrl: `${SiteConfiguration.releasesUrl}/download/v${SiteConfiguration.currentReleaseVersion}/Tile-Me-v${SiteConfiguration.currentReleaseVersion}.dmg`,
+      primaryLabel: `Download v${SiteConfiguration.currentReleaseVersion} DMG`,
+      versionLabel: SiteConfiguration.currentReleaseVersion,
+      statusText: `Version ${SiteConfiguration.currentReleaseVersion} is available as the current public build. Live GitHub release metadata is unavailable right now.`,
+      zipUrl: `${SiteConfiguration.releasesUrl}/download/v${SiteConfiguration.currentReleaseVersion}/Tile-Me-v${SiteConfiguration.currentReleaseVersion}.zip`,
+      zipLabel: `Download v${SiteConfiguration.currentReleaseVersion} ZIP`,
     });
   } finally {
     window.clearTimeout(timeout);
