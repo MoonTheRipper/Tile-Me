@@ -2,6 +2,18 @@
 
 All notable changes to Tile Me are documented in this file.
 
+## [1.0.4] - 2026-04-02
+
+### Fixed
+
+- corrected the Accessibility/AppKit coordinate reflection to use each display's full screen frame while tile geometry continues to resolve inside `visibleFrame`
+- fixed tiled window placement on displays with lower visible insets, where bottom-row tiles could be pushed below the bezel area and top-row moves could land in the wrong half of the display
+
+### Changed
+
+- added a regression test that models `visibleFrame` tile placement inside a taller full display frame
+- updated app, website, and release metadata for `v1.0.4`
+
 ## [1.0.3] - 2026-04-02
 
 ### Fixed

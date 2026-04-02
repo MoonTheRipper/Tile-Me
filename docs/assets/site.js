@@ -1,5 +1,5 @@
 const SiteConfiguration = {
-  currentReleaseVersion: "1.0.3",
+  currentReleaseVersion: "1.0.4",
   repoUrl: "https://github.com/MoonTheRipper/Tile-Me",
   releasesUrl: "https://github.com/MoonTheRipper/Tile-Me/releases",
   latestReleaseApiUrl: "https://api.github.com/repos/MoonTheRipper/Tile-Me/releases/latest",

@@ -30,17 +30,25 @@ final class AccessibilityServicesTests: XCTestCase {
         XCTAssertEqual(roundTrippedFrame, appFrame)
     }
 
-    func testAccessibilityCoordinateTransformerRoundTripsInsetVisibleFrames() {
+    func testAccessibilityCoordinateTransformerUsesFullDisplayFrameForVisibleFrameTargets() {
+        let fullDisplayFrame = CGRect(x: 0, y: 0, width: 1200, height: 800)
+        let visibleFrame = CGRect(x: 0, y: 40, width: 1200, height: 760)
+        let layoutFrames = LayoutEngine().resolve(layout: BuiltinLayouts.grid2x2, in: visibleFrame)
         let transformer = AccessibilityCoordinateTransformer(
-            screenFrames: [CGRect(x: 0, y: 24, width: 1200, height: 736)]
+            screenFrames: [fullDisplayFrame]
         )
-        let appFrame = CGRect(x: 0, y: 392, width: 600, height: 368)
 
-        let accessibilityFrame = transformer.accessibilityFrame(fromAppFrame: appFrame)
-        let roundTrippedFrame = transformer.appFrame(fromAccessibilityFrame: accessibilityFrame)
+        let topLeftTile = layoutFrames[0].frame
+        let bottomLeftTile = layoutFrames[2].frame
+        let topAccessibilityFrame = transformer.accessibilityFrame(fromAppFrame: topLeftTile)
+        let bottomAccessibilityFrame = transformer.accessibilityFrame(fromAppFrame: bottomLeftTile)
 
-        XCTAssertEqual(accessibilityFrame, CGRect(x: 0, y: 24, width: 600, height: 368))
-        XCTAssertEqual(roundTrippedFrame, appFrame)
+        XCTAssertEqual(topLeftTile, CGRect(x: 0, y: 420, width: 600, height: 380))
+        XCTAssertEqual(bottomLeftTile, CGRect(x: 0, y: 40, width: 600, height: 380))
+        XCTAssertEqual(topAccessibilityFrame, CGRect(x: 0, y: 0, width: 600, height: 380))
+        XCTAssertEqual(bottomAccessibilityFrame, CGRect(x: 0, y: 380, width: 600, height: 380))
+        XCTAssertEqual(transformer.appFrame(fromAccessibilityFrame: topAccessibilityFrame), topLeftTile)
+        XCTAssertEqual(transformer.appFrame(fromAccessibilityFrame: bottomAccessibilityFrame), bottomLeftTile)
     }
 
     func testPermissionStoreRefreshUsesCheckerState() {
