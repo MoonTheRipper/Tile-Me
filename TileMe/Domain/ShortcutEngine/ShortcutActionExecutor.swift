@@ -56,6 +56,11 @@ protocol ShortcutActionExecuting {
     func execute(_ command: ShortcutCommand, workspaceProfile: WorkspaceProfile) -> Result<FocusedWindowSnapshot, ShortcutExecutionError>
 }
 
+private struct TileMoveSourceContext {
+    let tileIndex: Int?
+    let logicalPosition: LogicalTilePosition?
+}
+
 @MainActor
 final class ShortcutActionExecutor: ShortcutActionExecuting {
     private let displayProvider: any DisplayProviding
@@ -107,14 +112,16 @@ final class ShortcutActionExecutor: ShortcutActionExecuting {
                     index: 0,
                     layout: BuiltinLayouts.halves,
                     display: currentDisplay(for: snapshot),
-                    allowClampedIndex: false
+                    allowClampedIndex: false,
+                    sourceContext: nil
                 )
             case .rightHalf:
                 return moveToResolvedFrame(
                     index: 1,
                     layout: BuiltinLayouts.halves,
                     display: currentDisplay(for: snapshot),
-                    allowClampedIndex: false
+                    allowClampedIndex: false,
+                    sourceContext: nil
                 )
             }
         case let .moveToTileOnNextDisplay(index):
@@ -127,21 +134,37 @@ final class ShortcutActionExecutor: ShortcutActionExecuting {
         snapshot: FocusedWindowSnapshot,
         workspaceProfile: WorkspaceProfile
     ) -> Result<FocusedWindowSnapshot, ShortcutExecutionError> {
+        let displays = displayProvider.displays
         let currentDisplayID = currentDisplay(for: snapshot)?.id
-        guard let destination = tileTraversalService.destination(
+        guard let resolution = tileTraversalService.resolution(
             for: snapshot.frame,
             direction: direction,
             currentDisplayID: currentDisplayID,
-            displays: displayProvider.displays,
+            displays: displays,
             workspaceProfile: workspaceProfile
         ) else {
             return .success(snapshot)
         }
 
-        shortcutActionLogger.debug(
-            "Traversal selected direction=\(direction.rawValue, privacy: .public) tileID=\(destination.tileID, privacy: .public) displayID=\(destination.displayID, privacy: .public) target=\(destination.frame.debugDescription, privacy: .public)"
+        guard let targetDisplay = displays.first(where: { $0.id == resolution.destination.displayID }) else {
+            return .failure(.noTargetDisplay)
+        }
+
+        let sourceLayout = resolvedLayout(for: resolution.source.displayID, workspaceProfile: workspaceProfile)
+        let destinationLayout = resolvedLayout(for: resolution.destination.displayID, workspaceProfile: workspaceProfile)
+        let targetFrame = resolution.destination.frame.clamped(to: targetDisplay.visibleFrame)
+
+        logTileMovement(
+            operation: "traversal.\(direction.rawValue)",
+            display: targetDisplay,
+            sourceTileIndex: resolution.source.index,
+            sourceLogicalPosition: layoutEngine.logicalTilePosition(forTileIndex: resolution.source.index, in: sourceLayout),
+            destinationTileIndex: resolution.destination.index,
+            destinationLogicalPosition: layoutEngine.logicalTilePosition(forTileIndex: resolution.destination.index, in: destinationLayout),
+            targetFrame: targetFrame
         )
-        return moveWindow(to: destination.frame)
+
+        return moveWindow(to: targetFrame, within: targetDisplay.visibleFrame)
     }
 
     private func moveToTile(
@@ -159,9 +182,24 @@ final class ShortcutActionExecutor: ShortcutActionExecuting {
             return .failure(.noTargetDisplay)
         }
 
+        let sourceLayout = resolvedLayout(for: baseDisplay.id, workspaceProfile: workspaceProfile)
+        let sourceTileIndex = layoutEngine.closestTileIndex(
+            to: snapshot.frame,
+            in: sourceLayout,
+            bounds: baseDisplay.visibleFrame
+        )
         let layoutID = workspaceProfile.resolvedLayoutID(for: targetDisplay.id)
         let layout = BuiltinLayouts.definition(id: layoutID) ?? BuiltinLayouts.defaultLayout
-        return moveToResolvedFrame(index: index, layout: layout, display: targetDisplay, allowClampedIndex: false)
+        return moveToResolvedFrame(
+            index: index,
+            layout: layout,
+            display: targetDisplay,
+            allowClampedIndex: false,
+            sourceContext: TileMoveSourceContext(
+                tileIndex: sourceTileIndex,
+                logicalPosition: sourceTileIndex.flatMap { layoutEngine.logicalTilePosition(forTileIndex: $0, in: sourceLayout) }
+            )
+        )
     }
 
     private func maximize(snapshot: FocusedWindowSnapshot) -> Result<FocusedWindowSnapshot, ShortcutExecutionError> {
@@ -169,7 +207,7 @@ final class ShortcutActionExecutor: ShortcutActionExecuting {
             return .failure(.noTargetDisplay)
         }
 
-        return moveWindow(to: display.visibleFrame)
+        return moveWindow(to: display.visibleFrame, within: display.visibleFrame)
     }
 
     private func moveToNextDisplay(snapshot: FocusedWindowSnapshot) -> Result<FocusedWindowSnapshot, ShortcutExecutionError> {
@@ -182,7 +220,7 @@ final class ShortcutActionExecutor: ShortcutActionExecuting {
         }
 
         let translatedFrame = translate(frame: snapshot.frame, from: sourceDisplay.visibleFrame, to: targetDisplay.visibleFrame)
-        return moveWindow(to: translatedFrame)
+        return moveWindow(to: translatedFrame, within: targetDisplay.visibleFrame)
     }
 
     private func moveToNextDisplayPreservingTile(
@@ -211,7 +249,11 @@ final class ShortcutActionExecutor: ShortcutActionExecuting {
             index: sourceTileIndex,
             layout: targetLayout,
             display: targetDisplay,
-            allowClampedIndex: true
+            allowClampedIndex: true,
+            sourceContext: TileMoveSourceContext(
+                tileIndex: sourceTileIndex,
+                logicalPosition: layoutEngine.logicalTilePosition(forTileIndex: sourceTileIndex, in: sourceLayout)
+            )
         )
     }
 
@@ -219,7 +261,8 @@ final class ShortcutActionExecutor: ShortcutActionExecuting {
         index: Int,
         layout: LayoutDefinition,
         display: DisplayProfile?,
-        allowClampedIndex: Bool
+        allowClampedIndex: Bool,
+        sourceContext: TileMoveSourceContext?
     ) -> Result<FocusedWindowSnapshot, ShortcutExecutionError> {
         guard let display else {
             return .failure(.noTargetDisplay)
@@ -235,14 +278,24 @@ final class ShortcutActionExecutor: ShortcutActionExecuting {
             return .failure(.tileUnavailable(index: index))
         }
 
-        shortcutActionLogger.debug(
-            "Tile move selected index=\(resolvedIndex, privacy: .public) tileID=\(targetFrame.tileID, privacy: .public) displayID=\(display.id, privacy: .public) target=\(targetFrame.frame.debugDescription, privacy: .public)"
+        let clampedTargetFrame = targetFrame.frame.clamped(to: display.visibleFrame)
+        logTileMovement(
+            operation: allowClampedIndex ? "tileMove.clampedIndex" : "tileMove",
+            display: display,
+            sourceTileIndex: sourceContext?.tileIndex,
+            sourceLogicalPosition: sourceContext?.logicalPosition,
+            destinationTileIndex: resolvedIndex,
+            destinationLogicalPosition: layoutEngine.logicalTilePosition(forTileIndex: resolvedIndex, in: layout),
+            targetFrame: clampedTargetFrame
         )
-        return moveWindow(to: targetFrame.frame)
+        return moveWindow(to: clampedTargetFrame, within: display.visibleFrame)
     }
 
-    private func moveWindow(to frame: CGRect) -> Result<FocusedWindowSnapshot, ShortcutExecutionError> {
-        switch windowCommands.moveFocusedWindow(to: frame.integral) {
+    private func moveWindow(to frame: CGRect, within visibleFrame: CGRect? = nil) -> Result<FocusedWindowSnapshot, ShortcutExecutionError> {
+        let targetFrame = (visibleFrame.map { frame.clamped(to: $0) } ?? frame).integral
+        let finalTargetFrame = visibleFrame.map { targetFrame.clamped(to: $0) } ?? targetFrame
+
+        switch windowCommands.moveFocusedWindow(to: finalTargetFrame) {
         case let .success(snapshot):
             return .success(snapshot)
         case let .failure(error):
@@ -256,6 +309,33 @@ final class ShortcutActionExecutor: ShortcutActionExecuting {
         }
 
         return displayProvider.displays.first
+    }
+
+    private func resolvedLayout(for displayID: String, workspaceProfile: WorkspaceProfile) -> LayoutDefinition {
+        let layoutID = workspaceProfile.resolvedLayoutID(for: displayID)
+        return BuiltinLayouts.definition(id: layoutID) ?? BuiltinLayouts.defaultLayout
+    }
+
+    private func logTileMovement(
+        operation: String,
+        display: DisplayProfile,
+        sourceTileIndex: Int?,
+        sourceLogicalPosition: LogicalTilePosition?,
+        destinationTileIndex: Int,
+        destinationLogicalPosition: LogicalTilePosition?,
+        targetFrame: CGRect
+    ) {
+#if DEBUG
+        let sourceIndexDescription = sourceTileIndex.map(String.init) ?? "unresolved"
+        let sourceRowDescription = sourceLogicalPosition.map { String($0.row) } ?? "n/a"
+        let sourceColumnDescription = sourceLogicalPosition.map { String($0.column) } ?? "n/a"
+        let destinationRowDescription = destinationLogicalPosition.map { String($0.row) } ?? "n/a"
+        let destinationColumnDescription = destinationLogicalPosition.map { String($0.column) } ?? "n/a"
+
+        shortcutActionLogger.debug(
+            "Tile movement operation=\(operation, privacy: .public) displayID=\(display.id, privacy: .public) visibleFrame=\(display.visibleFrame.debugDescription, privacy: .public) sourceTileIndex=\(sourceIndexDescription, privacy: .public) sourceRow=\(sourceRowDescription, privacy: .public) sourceColumn=\(sourceColumnDescription, privacy: .public) destinationTileIndex=\(destinationTileIndex, privacy: .public) destinationRow=\(destinationRowDescription, privacy: .public) destinationColumn=\(destinationColumnDescription, privacy: .public) targetFrame=\(targetFrame.debugDescription, privacy: .public)"
+        )
+#endif
     }
 
     private func translate(frame: CGRect, from sourceBounds: CGRect, to targetBounds: CGRect) -> CGRect {
@@ -281,6 +361,17 @@ final class ShortcutActionExecutor: ShortcutActionExecuting {
             width: targetSize.width,
             height: targetSize.height
         ).integral
+    }
+}
+
+private extension CGRect {
+    func clamped(to bounds: CGRect) -> CGRect {
+        let clampedWidth = Swift.min(width, bounds.width)
+        let clampedHeight = Swift.min(height, bounds.height)
+        let clampedX = Swift.min(Swift.max(minX, bounds.minX), bounds.maxX - clampedWidth)
+        let clampedY = Swift.min(Swift.max(minY, bounds.minY), bounds.maxY - clampedHeight)
+
+        return CGRect(x: clampedX, y: clampedY, width: clampedWidth, height: clampedHeight)
     }
 }
 

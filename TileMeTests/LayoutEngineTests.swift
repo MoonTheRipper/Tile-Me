@@ -126,4 +126,50 @@ final class LayoutEngineTests: XCTestCase {
             "nested-large-left-stacked-right-bottom",
         ])
     }
+
+    func testTwoByTwoGridResolvesInsideVisibleFrameWithInsetOrigin() {
+        let visibleFrame = CGRect(x: 100, y: 24, width: 1200, height: 736)
+
+        let frames = engine.resolve(layout: BuiltinLayouts.grid2x2, in: visibleFrame)
+
+        XCTAssertEqual(frames.map(\.frame), [
+            CGRect(x: 100, y: 392, width: 600, height: 368),
+            CGRect(x: 700, y: 392, width: 600, height: 368),
+            CGRect(x: 100, y: 24, width: 600, height: 368),
+            CGRect(x: 700, y: 24, width: 600, height: 368),
+        ])
+        XCTAssertTrue(frames.allSatisfy { $0.frame.minY >= visibleFrame.minY })
+        XCTAssertTrue(frames.allSatisfy { $0.frame.maxY <= visibleFrame.maxY })
+    }
+
+    func testTwoByTwoGridTopAndBottomRowsExactlyPartitionVisibleHeight() {
+        let visibleFrame = CGRect(x: 0, y: 23, width: 1200, height: 737)
+
+        let frames = engine.resolve(layout: BuiltinLayouts.grid2x2, in: visibleFrame)
+        let topLeft = frames[0].frame
+        let bottomLeft = frames[2].frame
+
+        XCTAssertEqual(topLeft.maxY, visibleFrame.maxY)
+        XCTAssertEqual(bottomLeft.minY, visibleFrame.minY)
+        XCTAssertEqual(topLeft.minY, bottomLeft.maxY)
+        XCTAssertEqual(topLeft.height + bottomLeft.height, visibleFrame.height)
+    }
+
+    func testCommonGridPresetsStayWithinVisibleFrameBounds() {
+        let visibleFrame = CGRect(x: 10, y: 23, width: 1199, height: 737)
+
+        for layout in [BuiltinLayouts.grid2x2, BuiltinLayouts.grid3x3, BuiltinLayouts.grid4x4] {
+            let frames = engine.resolve(layout: layout, in: visibleFrame)
+
+            XCTAssertFalse(frames.isEmpty, "Expected \(layout.name) to resolve at least one tile.")
+            XCTAssertTrue(
+                frames.allSatisfy { $0.frame.minX >= visibleFrame.minX && $0.frame.maxX <= visibleFrame.maxX },
+                "Expected every \(layout.name) tile to stay within the visibleFrame width."
+            )
+            XCTAssertTrue(
+                frames.allSatisfy { $0.frame.minY >= visibleFrame.minY && $0.frame.maxY <= visibleFrame.maxY },
+                "Expected every \(layout.name) tile to stay within the visibleFrame height."
+            )
+        }
+    }
 }

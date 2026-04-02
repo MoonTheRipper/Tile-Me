@@ -53,6 +53,37 @@ final class ShortcutEngineTests: XCTestCase {
         XCTAssertEqual(commandRunner.lastMovedFrame, CGRect(x: 0, y: 0, width: 600, height: 760))
     }
 
+    func testExecutorUsesVisibleFrameGeometryForDirectTwoByTwoTileSelection() {
+        let display = DisplayProfile(
+            id: "main",
+            name: "Main",
+            frame: CGRect(x: 0, y: 0, width: 1200, height: 800),
+            visibleFrame: CGRect(x: 0, y: 24, width: 1200, height: 736),
+            scale: 2,
+            isBuiltIn: true
+        )
+        let commandRunner = RecordingWindowCommandRunner(
+            snapshot: FocusedWindowSnapshot(
+                application: FocusedApplication(processID: 42, localizedName: "Preview", bundleIdentifier: "com.apple.Preview"),
+                title: "Document",
+                frame: CGRect(x: 120, y: 80, width: 500, height: 400),
+                isMovable: true,
+                isResizable: true
+            )
+        )
+        let executor = ShortcutActionExecutor(
+            displayProvider: StubDisplayProvider(displays: [display]),
+            windowCommands: commandRunner
+        )
+        var profile = WorkspaceProfile(shortcuts: [:])
+        profile.setLayout(id: BuiltinLayouts.grid2x2.id, for: display.id)
+
+        let result = executor.execute(.action(.moveToTile(index: 0)), workspaceProfile: profile)
+
+        XCTAssertNotNil(try? result.get())
+        XCTAssertEqual(commandRunner.lastMovedFrame, CGRect(x: 0, y: 392, width: 600, height: 368))
+    }
+
     func testExecutorMaximizesFocusedWindowInCurrentDisplay() {
         let display = DisplayProfile(
             id: "main",

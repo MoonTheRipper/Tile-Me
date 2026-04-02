@@ -255,4 +255,93 @@ final class TileTraversalServiceTests: XCTestCase {
         XCTAssertEqual(destination?.tileID, "nested-top-pair-bottom-wide-bottom")
         XCTAssertEqual(destination?.frame, CGRect(x: 0, y: 0, width: 1200, height: 254))
     }
+
+    func testTraversalMovesFromBottomLeftToTopLeftInTwoByTwoGridUsingVisibleFrameCoordinates() {
+        let display = DisplayProfile(
+            id: "main",
+            name: "Main",
+            frame: CGRect(x: 0, y: 0, width: 1200, height: 800),
+            visibleFrame: CGRect(x: 0, y: 24, width: 1200, height: 736),
+            scale: 2,
+            isBuiltIn: true
+        )
+        var profile = WorkspaceProfile(shortcuts: [:])
+        profile.setLayout(id: BuiltinLayouts.grid2x2.id, for: display.id)
+
+        let destination = service.destination(
+            for: CGRect(x: 0, y: 24, width: 600, height: 368),
+            direction: .up,
+            currentDisplayID: display.id,
+            displays: [display],
+            workspaceProfile: profile
+        )
+
+        XCTAssertEqual(destination?.tileID, "grid-2x2-r1-c1")
+        XCTAssertEqual(destination?.frame, CGRect(x: 0, y: 392, width: 600, height: 368))
+    }
+
+    func testTraversalMovesFromBottomRightToTopRightInTwoByTwoGridUsingVisibleFrameCoordinates() {
+        let display = DisplayProfile(
+            id: "main",
+            name: "Main",
+            frame: CGRect(x: 0, y: 0, width: 1200, height: 800),
+            visibleFrame: CGRect(x: 0, y: 24, width: 1200, height: 736),
+            scale: 2,
+            isBuiltIn: true
+        )
+        var profile = WorkspaceProfile(shortcuts: [:])
+        profile.setLayout(id: BuiltinLayouts.grid2x2.id, for: display.id)
+
+        let destination = service.destination(
+            for: CGRect(x: 600, y: 24, width: 600, height: 368),
+            direction: .up,
+            currentDisplayID: display.id,
+            displays: [display],
+            workspaceProfile: profile
+        )
+
+        XCTAssertEqual(destination?.tileID, "grid-2x2-r1-c2")
+        XCTAssertEqual(destination?.frame, CGRect(x: 600, y: 392, width: 600, height: 368))
+    }
+
+    func testTraversalPreservesTopOriginRowOrderingForThreeByThreeAndFourByFourGrids() {
+        let layouts: [(LayoutDefinition, CGRect, CGRect, String)] = [
+            (
+                BuiltinLayouts.grid3x3,
+                CGRect(x: 0, y: 23, width: 400, height: 247),
+                CGRect(x: 0, y: 270, width: 400, height: 245),
+                "grid-3x3-r2-c1"
+            ),
+            (
+                BuiltinLayouts.grid4x4,
+                CGRect(x: 0, y: 23, width: 300, height: 185),
+                CGRect(x: 0, y: 208, width: 300, height: 184),
+                "grid-4x4-r3-c1"
+            ),
+        ]
+
+        for (layout, sourceFrame, expectedFrame, expectedTileID) in layouts {
+            let display = DisplayProfile(
+                id: layout.id,
+                name: layout.name,
+                frame: CGRect(x: 0, y: 0, width: 1200, height: 800),
+                visibleFrame: CGRect(x: 0, y: 23, width: 1200, height: 737),
+                scale: 2,
+                isBuiltIn: true
+            )
+            var profile = WorkspaceProfile(shortcuts: [:])
+            profile.setLayout(id: layout.id, for: display.id)
+
+            let destination = service.destination(
+                for: sourceFrame,
+                direction: .up,
+                currentDisplayID: display.id,
+                displays: [display],
+                workspaceProfile: profile
+            )
+
+            XCTAssertEqual(destination?.tileID, expectedTileID)
+            XCTAssertEqual(destination?.frame, expectedFrame)
+        }
+    }
 }

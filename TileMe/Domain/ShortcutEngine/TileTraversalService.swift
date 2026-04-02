@@ -10,6 +10,11 @@ struct TraversalTileCandidate: Equatable, Sendable {
     let sortOrder: Int
 }
 
+struct TileTraversalResolution: Equatable, Sendable {
+    let source: TraversalTileCandidate
+    let destination: TraversalTileCandidate
+}
+
 struct TileTraversalService {
     private let layoutEngine: LayoutEngine
 
@@ -54,6 +59,22 @@ struct TileTraversalService {
         displays: [DisplayProfile],
         workspaceProfile: WorkspaceProfile
     ) -> TraversalTileCandidate? {
+        resolution(
+            for: windowFrame,
+            direction: direction,
+            currentDisplayID: currentDisplayID,
+            displays: displays,
+            workspaceProfile: workspaceProfile
+        )?.destination
+    }
+
+    func resolution(
+        for windowFrame: CGRect,
+        direction: TileTraversalDirection,
+        currentDisplayID: String?,
+        displays: [DisplayProfile],
+        workspaceProfile: WorkspaceProfile
+    ) -> TileTraversalResolution? {
         let candidates = resolveCandidates(displays: displays, workspaceProfile: workspaceProfile)
         let displayBoundsByID = Dictionary(uniqueKeysWithValues: displays.map { ($0.id, $0.visibleFrame) })
         guard !candidates.isEmpty else {
@@ -79,18 +100,22 @@ struct TileTraversalService {
             in: sameDisplayCandidates,
             direction: direction
         ) {
-            return candidate
+            return TileTraversalResolution(source: currentCandidate, destination: candidate)
         }
 
         let otherDisplayCandidates = candidates.filter {
             $0.displayID != preferredDisplayID && !isSameTile($0, currentCandidate)
         }
 
-        return bestDirectionalCandidate(
+        guard let candidate = bestDirectionalCandidate(
             from: currentCandidate,
             in: otherDisplayCandidates,
             direction: direction
-        )
+        ) else {
+            return nil
+        }
+
+        return TileTraversalResolution(source: currentCandidate, destination: candidate)
     }
 
     private func inferCurrentCandidate(

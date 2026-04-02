@@ -116,7 +116,7 @@ private struct BuiltinLayoutSummaryView: View {
             Text("Dense layouts are available, but some apps may clamp very small windows instead of fitting every tile exactly.")
                 .foregroundStyle(.secondary)
 
-            Text("The menu keeps quick selection grouped by preset family in v1.0.2.")
+            Text("The menu keeps quick selection grouped by preset family in v1.0.3.")
                 .font(.caption)
                 .foregroundStyle(.secondary)
         }

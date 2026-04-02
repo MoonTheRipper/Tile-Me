@@ -2,6 +2,19 @@
 
 All notable changes to Tile Me are documented in this file.
 
+## [1.0.3] - 2026-04-02
+
+### Fixed
+
+- corrected grid tile geometry to resolve from each display's `visibleFrame` so bottom-row windows no longer slip under the bottom bezel and top-row windows no longer sit too high
+- aligned keyboard arrow traversal with the same top-origin row ordering used for tile placement, fixing `2x2` upward moves that could reuse the wrong tile index
+
+### Changed
+
+- unified direct tile selection and keyboard traversal around one logical row and column to `CGRect` helper with final target-frame clamping
+- added debug-only logging for display IDs, visible frames, source and destination tile indices, logical row and column, and computed target frames
+- updated app and release metadata for `v1.0.3`
+
 ## [1.0.2] - 2026-03-28
 
 ### Added

@@ -30,6 +30,19 @@ final class AccessibilityServicesTests: XCTestCase {
         XCTAssertEqual(roundTrippedFrame, appFrame)
     }
 
+    func testAccessibilityCoordinateTransformerRoundTripsInsetVisibleFrames() {
+        let transformer = AccessibilityCoordinateTransformer(
+            screenFrames: [CGRect(x: 0, y: 24, width: 1200, height: 736)]
+        )
+        let appFrame = CGRect(x: 0, y: 392, width: 600, height: 368)
+
+        let accessibilityFrame = transformer.accessibilityFrame(fromAppFrame: appFrame)
+        let roundTrippedFrame = transformer.appFrame(fromAccessibilityFrame: accessibilityFrame)
+
+        XCTAssertEqual(accessibilityFrame, CGRect(x: 0, y: 24, width: 600, height: 368))
+        XCTAssertEqual(roundTrippedFrame, appFrame)
+    }
+
     func testPermissionStoreRefreshUsesCheckerState() {
         let checker = StubPermissionChecker(currentStatus: .denied, requestedStatus: .granted)
         let store = AccessibilityPermissionStore(checker: checker, settingsOpener: StubSettingsOpener())

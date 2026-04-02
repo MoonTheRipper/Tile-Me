@@ -5,7 +5,7 @@ final class AppModel: ObservableObject {
     let appName = "Tile Me"
 
     var versionString: String {
-        Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "1.0.2"
+        Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "1.0.3"
     }
 
     var currentVersion: SemanticVersion? {

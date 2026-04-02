@@ -152,7 +152,7 @@ final class SystemFocusedWindowController: FocusedWindowControlling {
     init(
         workspace: NSWorkspace = .shared,
         permissionChecker: any AccessibilityPermissionChecking = SystemAccessibilityPermissionChecker(),
-        screenFramesProvider: @escaping @Sendable () -> [CGRect] = { NSScreen.screens.map(\.frame) }
+        screenFramesProvider: @escaping @Sendable () -> [CGRect] = { NSScreen.screens.map(\.visibleFrame) }
     ) {
         self.workspace = workspace
         self.permissionChecker = permissionChecker
